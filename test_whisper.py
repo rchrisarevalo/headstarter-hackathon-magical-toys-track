@@ -1,15 +1,27 @@
 import whisper
 import subprocess
+import sys
+import os
 
-model = whisper.load_model("base")
+try:
+    model = whisper.load_model("base")
 
-audio_file = "media/Recording.wav"
+    audio_file = "./media/Recording.wav"
 
-result = model.transcribe(audio_file)
+    if not os.path.exists(audio_file):
+        print("The path does not exist")
+        raise Exception
+    else:
+        print("The path does exist.")
 
-phrase = "Test: Hello"
-response = result['text']
+    result = model.transcribe(audio_file)
 
-subprocess.run(["node", "index.js", phrase, response])
+    phrase = "Test: Hello"
+    response = result['text']
 
-print("Recognized text:", response)
+    subprocess.run(["node", "index.js", phrase, response])
+
+    print("Recognized text:", response)
+
+except Exception as e:
+    print(f"Error occurred at line {sys.exc_info()[-1].tb_lineno}: {e}")

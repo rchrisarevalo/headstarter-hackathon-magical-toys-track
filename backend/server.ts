@@ -5,6 +5,7 @@ import OpenAI from 'openai';
 import axios from 'axios';
 import Groq from 'groq-sdk';
 import Redis from 'redis';
+import cors from 'cors';
 import { MongoClient } from 'mongodb';
 import path from 'path';
 import os from 'os';
@@ -29,6 +30,7 @@ mongoClient.connect().then(() => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors())
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -103,6 +105,10 @@ async function getResponseAudio(text: string): Promise<string> {
 }
 
 
+app.get("/", async (req, res) => {
+  res.status(200).send({"message": "Hello world!"})
+})
+
 app.post('/api/voice-interaction', upload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).send('No file uploaded.');
   
@@ -119,18 +125,22 @@ app.post('/api/voice-interaction', upload.single('file'), async (req, res) => {
     // llama text response generation
     const response_text = await processText(stt_text)
 
-    // tts w/ tortoise tts
-    const tts_audio_url = await getResponseAudio(response_text)
+    // // tts w/ tortoise tts
+    // const tts_audio_url = await getResponseAudio(response_text)
 
     // save to mongo
     await mongoClient.connect();
     const db = mongoClient.db('voiceAI');
-    await db.collection('interactions').insertOne({ stt_text, response: response_text, tts_audio_url });
+    await db.collection('interactions').insertOne({ stt_text, response: response_text });
 
-    res.json({ response: response_text, tts_audio_url });
+    // res.json({ response: response_text });
 
     fs.unlinkSync(tempFilePath);
-    fs.unlinkSync(tts_audio_url);
+    // fs.unlinkSync(tts_audio_url);
+
+    console.log("About to approach response send.")
+
+    res.status(200).json({ response: response_text })
 
   } catch (error) {
     console.log(error)

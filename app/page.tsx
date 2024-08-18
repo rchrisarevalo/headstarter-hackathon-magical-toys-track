@@ -14,7 +14,8 @@ export default function Home() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (audioFile) {
       const formData = new FormData();
       formData.append("file", audioFile);

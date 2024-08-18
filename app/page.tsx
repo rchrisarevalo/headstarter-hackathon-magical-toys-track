@@ -8,7 +8,6 @@ export default function Home() {
   const handleSubmission = async (e: FormEvent<HTMLFormElement>) => {
     // Set up logic to handle voice file submission or
     // audio submission that came from user's mic.
-    // * LOGIC HERE *
     e.preventDefault()
     console.log("Clicked!")
 

@@ -5,12 +5,36 @@ import { FormEvent, useEffect, useState } from "react";
 export default function Home() {
   const [voiceChatOpen, setVoiceChatOpen] = useState<boolean>(false);
 
-  const handleSubmission = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmission = async (e: FormEvent<HTMLFormElement>) => {
     // Set up logic to handle voice file submission or
     // audio submission that came from user's mic.
     // * LOGIC HERE *
     e.preventDefault()
     console.log("Clicked!")
+
+    const audio_file = (document.getElementById("audio-file")) as HTMLInputElement
+    const form = new FormData()
+
+    if (audio_file.files) {
+      form.append('audio-file', audio_file.files[0])
+    }
+
+    try {
+      const res = await fetch("http://localhost:8000/recognize", {
+        method: 'POST',
+        body: form
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+
+        // Placeholder output for now.
+        console.log(data)
+      }
+    
+    } catch {
+      throw new Error("Failed to upload an audio file")
+    }
   };
 
   return (
@@ -35,7 +59,7 @@ export default function Home() {
                 )}
               </button>
               <label>
-                <input type="file" accept="audio/wav" hidden></input>
+                <input type="file" accept="audio/wav" hidden id="audio-file"></input>
                 <span className="p-5 pl-10 pr-10 max-sm:pl-5 max-sm:pr-5 bg-white cursor-pointer font-extrabold text-lg text-black rounded-xl">
                   Upload
                 </span>

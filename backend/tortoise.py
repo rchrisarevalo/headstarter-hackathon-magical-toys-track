@@ -1,12 +1,17 @@
+import sys
+sys.path.append("C:\\Users\\ruben\\anaconda3\\envs\\tortoise\\Lib\\site-packages")
+print(sys.path)
+
 from flask import Flask, request, send_file
-from tortoise.api import TextToSpeech
+import tortoise
 
 app = Flask(__name__)
 
 @app.route('/generate-tts', methods=['POST'])
 def generate_tts():
     text = request.json['text']
-    tts = TextToSpeech()
+    print("Here is text:", text)
+    tts = tortoise.tts
     wav = tts.tts(text)
     wav.save("output.wav")
     return send_file("output.wav", mimetype="audio/wav")

@@ -19,7 +19,7 @@ export default function Home() {
       formData.append('file', audioFile);
 
       try {
-        const res = await axios.post('/api/voice-interaction', formData, {
+        const res = await axios.post('http://localhost:3001/api/voice-interaction', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
